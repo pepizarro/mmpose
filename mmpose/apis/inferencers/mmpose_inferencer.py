@@ -207,6 +207,7 @@ class MMPoseInferencer(BaseMMPoseInferencer):
                                         if self.show_progress else inputs):
             preds = self.forward(proc_inputs, **forward_kwargs)
 
+            print("preds: ", preds)
             visualization = self.visualize(ori_inputs, preds,
                                            **visualize_kwargs)
             results = self.postprocess(

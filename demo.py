@@ -1,3 +1,4 @@
+#!/usr/bin/python3 
 from mmpose.apis import MMPoseInferencer
 
 # img_path = 'tests/data/coco/000000000785.jpg'   # replace this with your own image path
@@ -20,12 +21,11 @@ inferencer = MMPoseInferencer(
 result_generator = inferencer(
     webcam,
     show=True,
-    wait_time=5000,
     vis_out_dir='vis_results/human3d',
     return_vis=False,
     pred_out_dir='vis_results/human3d',
 
-    # batch_size=2048
+    batch_size=2048
 )
 
 # Convert to list to get the length
