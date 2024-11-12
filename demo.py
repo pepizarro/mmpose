@@ -13,7 +13,7 @@ inferencer = MMPoseInferencer(
            'test_config.py',
     pose3d_weights='https://download.openmmlab.com/mmpose/v1/body_3d_keypoint/'
                    'pose_lift/h36m/motionbert_ft_h36m-d80af323_20230531.pth',
-    device="cuda",
+    device="cpu",
     # show_progress=True
 )
 

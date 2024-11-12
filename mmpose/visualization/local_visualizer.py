@@ -623,39 +623,39 @@ class PoseLocalVisualizer(OpencvBackendVisualizer):
         gt_img_data = None
         pred_img_data = None
 
-        if draw_gt:
-            gt_img_data = image.copy()
-            gt_img_heatmap = None
-
-            # draw bboxes & keypoints
-            if 'gt_instances' in data_sample:
-                gt_img_data = self._draw_instances_kpts(
-                    gt_img_data, data_sample.gt_instances, kpt_thr,
-                    show_kpt_idx, skeleton_style)
-                if draw_bbox:
-                    gt_img_data = self._draw_instances_bbox(
-                        gt_img_data, data_sample.gt_instances)
-
-            # draw heatmaps
-            if 'gt_fields' in data_sample and draw_heatmap:
-                gt_img_heatmap = self._draw_instance_heatmap(
-                    data_sample.gt_fields, image)
-                if gt_img_heatmap is not None:
-                    gt_img_data = np.concatenate((gt_img_data, gt_img_heatmap),
-                                                 axis=0)
+        # if draw_gt:
+        #     gt_img_data = image.copy()
+        #     gt_img_heatmap = None
+        #
+        #     # draw bboxes & keypoints
+        #     if 'gt_instances' in data_sample:
+        #         gt_img_data = self._draw_instances_kpts(
+        #             gt_img_data, data_sample.gt_instances, kpt_thr,
+        #             show_kpt_idx, skeleton_style)
+        #         if draw_bbox:
+        #             gt_img_data = self._draw_instances_bbox(
+        #                 gt_img_data, data_sample.gt_instances)
+        #
+        #     # draw heatmaps
+        #     if 'gt_fields' in data_sample and draw_heatmap:
+        #         gt_img_heatmap = self._draw_instance_heatmap(
+        #             data_sample.gt_fields, image)
+        #         if gt_img_heatmap is not None:
+        #             gt_img_data = np.concatenate((gt_img_data, gt_img_heatmap),
+        #                                          axis=0)
 
         if draw_pred:
             pred_img_data = image.copy()
             pred_img_heatmap = None
 
             # draw bboxes & keypoints
-            if 'pred_instances' in data_sample:
-                pred_img_data = self._draw_instances_kpts(
-                    pred_img_data, data_sample.pred_instances, kpt_thr,
-                    show_kpt_idx, skeleton_style)
-                if draw_bbox:
-                    pred_img_data = self._draw_instances_bbox(
-                        pred_img_data, data_sample.pred_instances)
+            # if 'pred_instances' in data_sample:
+            #     pred_img_data = self._draw_instances_kpts(
+            #         pred_img_data, data_sample.pred_instances, kpt_thr,
+            #         show_kpt_idx, skeleton_style)
+            #     if draw_bbox:
+            #         pred_img_data = self._draw_instances_bbox(
+            #             pred_img_data, data_sample.pred_instances)
 
             # draw heatmaps
             if 'pred_fields' in data_sample and draw_heatmap:
@@ -676,12 +676,14 @@ class PoseLocalVisualizer(OpencvBackendVisualizer):
             elif gt_img_heatmap is not None and pred_img_heatmap is None:
                 pred_img_data = np.concatenate((pred_img_data, image), axis=0)
 
-            drawn_img = np.concatenate((gt_img_data, pred_img_data), axis=1)
+            # drawn_img = np.concatenate((gt_img_data, pred_img_data), axis=1)
 
         elif gt_img_data is not None:
             drawn_img = gt_img_data
         else:
             drawn_img = pred_img_data
+        drawn_img = pred_img_data 
+
 
         # It is convenient for users to obtain the drawn image.
         # For example, the user wants to obtain the drawn image and

@@ -446,7 +446,9 @@ class OpencvBackendVisualizer(Visualizer):
             continue_key (str): The key for users to continue. Defaults to
                 the space key.
         """
+
         if self.backend == 'matplotlib':
+            print("matplotlib backend ")
             super().show(
                 drawn_img=drawn_img,
                 win_name=win_name,
@@ -454,6 +456,7 @@ class OpencvBackendVisualizer(Visualizer):
                 continue_key=continue_key)
 
         elif self.backend == 'opencv':
+            print("opencv backend ")
             # Keep images are shown in the same window, and the title of window
             # will be updated with `win_name`.
             if not hasattr(self, win_name):

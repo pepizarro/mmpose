@@ -78,7 +78,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
     def _draw_3d_data_samples(self,
                               image: np.ndarray,
                               pose_samples: PoseDataSample,
-                              draw_gt: bool = True,
+                              draw_gt: bool = False,
                               kpt_thr: float = 0.3,
                               num_instances=-1,
                               axis_azimuth: float = 70,
@@ -141,9 +141,9 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                 num_instances = len(pred_instances)
 
         num_fig = num_instances
-        if draw_gt:
-            vis_width *= 2
-            num_fig *= 2
+        # if draw_gt:
+        #     vis_width *= 2
+        #     num_fig *= 2
 
         plt.ioff()
         fig = plt.figure(
@@ -255,37 +255,40 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                                     keypoints_visible, 1, show_kpt_idx,
                                     'Prediction')
 
-        if draw_gt and 'gt_instances' in pose_samples:
-            gt_instances = pose_samples.gt_instances
-            if 'lifting_target' in gt_instances:
-                keypoints = gt_instances.get('lifting_target',
-                                             gt_instances.lifting_target)
-                scores = np.ones(keypoints.shape[:-1])
-
-                if 'lifting_target_visible' in gt_instances:
-                    keypoints_visible = gt_instances.lifting_target_visible
-                else:
-                    keypoints_visible = np.ones(keypoints.shape[:-1])
-            elif 'keypoints_gt' in gt_instances:
-                keypoints = gt_instances.get('keypoints_gt',
-                                             gt_instances.keypoints_gt)
-                scores = np.ones(keypoints.shape[:-1])
-
-                if 'keypoints_visible' in gt_instances:
-                    keypoints_visible = gt_instances.keypoints_visible
-                else:
-                    keypoints_visible = np.ones(keypoints.shape[:-1])
-            else:
-                raise ValueError('to visualize ground truth results, '
-                                 'data sample must contain '
-                                 '"lifting_target" or "keypoints_gt"')
-
-            if scores_2d is None:
-                scores_2d = np.ones(keypoints.shape[:-1])
-
-            _draw_3d_instances_kpts(keypoints, scores, scores_2d,
-                                    keypoints_visible, 2, show_kpt_idx,
-                                    'Ground Truth')
+            print("\n\n\n\n")
+            print("IN LOCAL VISUALIZER")
+            print("\n\n\n\n")
+        # if draw_gt and 'gt_instances' in pose_samples:
+        #     gt_instances = pose_samples.gt_instances
+        #     if 'lifting_target' in gt_instances:
+        #         keypoints = gt_instances.get('lifting_target',
+        #                                      gt_instances.lifting_target)
+        #         scores = np.ones(keypoints.shape[:-1])
+        #
+        #         if 'lifting_target_visible' in gt_instances:
+        #             keypoints_visible = gt_instances.lifting_target_visible
+        #         else:
+        #             keypoints_visible = np.ones(keypoints.shape[:-1])
+        #     elif 'keypoints_gt' in gt_instances:
+        #         keypoints = gt_instances.get('keypoints_gt',
+        #                                      gt_instances.keypoints_gt)
+        #         scores = np.ones(keypoints.shape[:-1])
+        #
+        #         if 'keypoints_visible' in gt_instances:
+        #             keypoints_visible = gt_instances.keypoints_visible
+        #         else:
+        #             keypoints_visible = np.ones(keypoints.shape[:-1])
+        #     else:
+        #         raise ValueError('to visualize ground truth results, '
+        #                          'data sample must contain '
+        #                          '"lifting_target" or "keypoints_gt"')
+        #
+        #     if scores_2d is None:
+        #         scores_2d = np.ones(keypoints.shape[:-1])
+        #
+        #     _draw_3d_instances_kpts(keypoints, scores, scores_2d,
+        #                             keypoints_visible, 2, show_kpt_idx,
+        #                             'Ground Truth')
 
         # convert figure to numpy array
         fig.tight_layout()
@@ -492,7 +495,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                        image: np.ndarray,
                        data_sample: PoseDataSample,
                        det_data_sample: Optional[PoseDataSample] = None,
-                       draw_gt: bool = True,
+                       draw_gt: bool = False,
                        draw_pred: bool = True,
                        draw_2d: bool = True,
                        draw_bbox: bool = False,
@@ -596,7 +599,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
         pred_img_data = self._draw_3d_data_samples(
             image.copy(),
             data_sample,
-            draw_gt=draw_gt,
+            draw_gt=False,
             num_instances=num_instances,
             axis_azimuth=axis_azimuth,
             axis_limit=axis_limit,

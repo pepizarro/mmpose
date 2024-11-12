@@ -391,6 +391,8 @@ class Pose3DInferencer(BaseMMPoseInferencer):
         Returns:
             List[np.ndarray]: Visualization results.
         """
+
+        # TID: este es el visualizer 3D
         if (not return_vis) and (not show) and (not vis_out_dir):
             return
 
@@ -426,6 +428,7 @@ class Pose3DInferencer(BaseMMPoseInferencer):
             if num_instances < 0:
                 num_instances = len(pred.pred_instances)
 
+            # TID: here the visualization occurs
             visualization = self.visualizer.add_datasample(
                 window_name,
                 img,
