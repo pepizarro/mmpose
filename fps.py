@@ -18,6 +18,8 @@ if __name__ == '__main__' :
         fps = video.get(cv2.cv.CV_CAP_PROP_FPS)
         print("Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps))
     else :
+        
+        video.set(cv2.CAP_PROP_FPS, 70)
         fps = video.get(cv2.CAP_PROP_FPS)
         print("Frames per second using video.get(cv2.CAP_PROP_FPS) : {0}".format(fps))
  
