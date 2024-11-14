@@ -497,7 +497,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                        det_data_sample: Optional[PoseDataSample] = None,
                        draw_gt: bool = False,
                        draw_pred: bool = True,
-                       draw_2d: bool = True,
+                       draw_2d: bool = False,
                        draw_bbox: bool = False,
                        show_kpt_idx: bool = False,
                        skeleton_style: str = 'mmpose',
@@ -628,6 +628,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
         # save it as a video during video inference.
         self.set_image(drawn_img)
 
+        drawn_img = None
         if show:
             self.show(drawn_img, win_name=name, wait_time=wait_time)
 
