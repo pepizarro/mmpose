@@ -247,7 +247,25 @@ class BaseMMPoseInferencer(BaseInferencer):
                 f'but got "{inputs}"')
 
         # Attempt to open the video capture object.
+
+        # TID:
+        print("\n\n Opening camera \n\n")
+        w = int(os.getenv('CAMERA_WIDTH', 640))
+        h = int(os.getenv('CAMERA_HEIGHT', 480))
+        fps = int(os.getenv('CAMERA_FPS', 30))
+
+
         vcap = cv2.VideoCapture(camera_id)
+        vcap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
+        vcap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
+        vcap.set(cv2.CAP_PROP_FPS, fps)
+
+        print("Camera specs:")
+        print("WIDTH: ", vcap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        print("HEIGHT: ", vcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print("FPS: ", vcap.get(cv2.CAP_PROP_FPS))
+        print("\n\n")
+
         if not vcap.isOpened():
             print_log(
                 f'Cannot open camera (ID={camera_id})',

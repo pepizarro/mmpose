@@ -13,15 +13,14 @@ inferencer = MMPoseInferencer(
            'test_config.py',
     pose3d_weights='https://download.openmmlab.com/mmpose/v1/body_3d_keypoint/'
                    'pose_lift/h36m/motionbert_ft_h36m-d80af323_20230531.pth',
-    device="cpu",
+    device="cuda",
     # show_progress=True
 )
 
 
 result_generator = inferencer(
     webcam,
-    show=True,
-    vis_out_dir='vis_results/human3d',
+    show=False,
     return_vis=False,
     pred_out_dir='vis_results/human3d',
 
@@ -30,12 +29,9 @@ result_generator = inferencer(
 
 # Convert to list to get the length
 results = list(result_generator)
-length = len(results)
-
-print(f"The length of result_generator is: {length}")
-
-results = [result for result in result_generator]
+# length = len(results)
+#
+#
+# results = [result for result in result_generator]
 # results = [result for index, result in enumerate(result_generator) if index % 2 == 0]
 
-print(len(results))
-print(type(results))

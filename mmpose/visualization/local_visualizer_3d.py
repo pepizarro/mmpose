@@ -255,9 +255,9 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                                     keypoints_visible, 1, show_kpt_idx,
                                     'Prediction')
 
-            print("\n\n\n\n")
-            print("IN LOCAL VISUALIZER")
-            print("\n\n\n\n")
+            # print("\n\n\n\n")
+            # print("IN LOCAL VISUALIZER")
+            # print("\n\n\n\n")
         # if draw_gt and 'gt_instances' in pose_samples:
         #     gt_instances = pose_samples.gt_instances
         #     if 'lifting_target' in gt_instances:
@@ -497,7 +497,8 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
                        det_data_sample: Optional[PoseDataSample] = None,
                        draw_gt: bool = False,
                        draw_pred: bool = True,
-                       draw_2d: bool = False,
+                       # TID: input webcam
+                       draw_2d: bool = True,
                        draw_bbox: bool = False,
                        show_kpt_idx: bool = False,
                        skeleton_style: str = 'mmpose',
@@ -575,6 +576,7 @@ class Pose3dLocalVisualizer(PoseLocalVisualizer):
         det_img_data = None
         scores_2d = None
 
+        # print("In 3d Visualizer \n\n\n\n")
         if draw_2d:
             det_img_data = image.copy()
 

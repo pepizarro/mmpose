@@ -456,7 +456,6 @@ class OpencvBackendVisualizer(Visualizer):
                 continue_key=continue_key)
 
         elif self.backend == 'opencv':
-            print("opencv backend ")
             # Keep images are shown in the same window, and the title of window
             # will be updated with `win_name`.
             if not hasattr(self, win_name):

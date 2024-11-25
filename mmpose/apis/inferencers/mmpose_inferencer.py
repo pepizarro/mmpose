@@ -2,12 +2,17 @@
 import warnings
 from typing import Dict, List, Optional, Sequence, Union
 
+import sys
+import time
+
 import numpy as np
 import torch
 from mmengine.config import Config, ConfigDict
 from mmengine.infer.infer import ModelType
 from mmengine.structures import InstanceData
 from rich.progress import track
+
+from tools.ring_buffer import RingBuffer
 
 from .base_mmpose_inferencer import BaseMMPoseInferencer
 from .hand3d_inferencer import Hand3DInferencer
@@ -184,10 +189,11 @@ class MMPoseInferencer(BaseMMPoseInferencer):
         if isinstance(inputs, str) and inputs.startswith('webcam'):
             inputs = self.inferencer._get_webcam_inputs(inputs)
             batch_size = 1
-            if not visualize_kwargs.get('show', False):
-                warnings.warn('The display mode is closed when using webcam '
-                              'input. It will be turned on automatically.')
-            visualize_kwargs['show'] = True
+            # TID: para desactivar la visualización
+            # if not visualize_kwargs.get('show', False):
+            #     warnings.warn('The display mode is closed when using webcam '
+            #                   'input. It will be turned on automatically.')
+            # visualize_kwargs['show'] = True
         else:
             inputs = self.inferencer._inputs_to_list(inputs)
         self._video_input = self.inferencer._video_input
@@ -201,13 +207,45 @@ class MMPoseInferencer(BaseMMPoseInferencer):
         if 'bbox_thr' in self.inferencer.forward_kwargs:
             forward_kwargs['bbox_thr'] = preprocess_kwargs.get('bbox_thr', -1)
 
+
+    
+        # TID: 
+        ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=256, create=True)
         preds = []
+        count = 0
+        start = time.time()
 
         for proc_inputs, ori_inputs in (track(inputs, description='Inference')
                                         if self.show_progress else inputs):
-            preds = self.forward(proc_inputs, **forward_kwargs)
 
-            # TID: print("preds: ", preds)
+            if count >= 1000:
+                break
+
+            preds = self.forward(proc_inputs, **forward_kwargs)
+            count += 1
+
+            try:
+                # print("preds: ", preds[0].pred_instances.keypoints)
+                result = preds[0].pred_instances.keypoints
+                print("shape: ", result.shape)
+                serialized = result.tobytes()
+
+                serialized = serialized.ljust(256, b'\0')
+                
+                print("serialized: ", serialized)
+                success = ring_buffer.write(serialized)
+                if success:
+                    print("Produced message")
+
+            except:
+                print("error producing message")
+
+
+
+            # print(f"\rPredictions: {count} \n", end="")
+            # sys.stdout.flush()
+
+
             visualization = self.visualize(ori_inputs, preds,
                                            **visualize_kwargs)
             results = self.postprocess(
@@ -216,6 +254,12 @@ class MMPoseInferencer(BaseMMPoseInferencer):
                 return_datasamples=return_datasamples,
                 **postprocess_kwargs)
             yield results
+
+        end = time.time()
+        elapsed = end - start
+        preds_ps = count / elapsed
+        print(f"\nTotal time: {elapsed:.6f} seconds, preds {count}")
+        print(f"Preds per second: {preds_ps}")
 
         if self._video_input:
             self._finalize_video_processing(
