@@ -210,13 +210,14 @@ class MMPoseInferencer(BaseMMPoseInferencer):
 
     
         # TID: 
-        ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=256, create=True)
+        ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=True)
         preds = []
         count = 0
         start = time.time()
 
         for proc_inputs, ori_inputs in (track(inputs, description='Inference')
                                         if self.show_progress else inputs):
+
 
             if count >= 1000:
                 break
@@ -227,18 +228,21 @@ class MMPoseInferencer(BaseMMPoseInferencer):
             try:
                 # print("preds: ", preds[0].pred_instances.keypoints)
                 result = preds[0].pred_instances.keypoints
-                print("shape: ", result.shape)
                 serialized = result.tobytes()
+                if len(serialized) == 408:
+                    first = serialized[:204]
+                    first = first.ljust(512, b'\0')
+                    ring_buffer.write(first)
+                    serialized = serialized[204:]
 
-                serialized = serialized.ljust(256, b'\0')
+
+                serialized = serialized.ljust(512, b'\0')
                 
-                print("serialized: ", serialized)
-                success = ring_buffer.write(serialized)
-                if success:
-                    print("Produced message")
+                # print("serialized: ", serialized)
+                ring_buffer.write(serialized)
 
-            except:
-                print("error producing message")
+            except Exception as e:
+                print("error producing message: ", e)
 
 
 

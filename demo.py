@@ -1,7 +1,13 @@
 #!/usr/bin/python3 
+import argparse
 from mmpose.apis import MMPoseInferencer
 
 # img_path = 'tests/data/coco/000000000785.jpg'   # replace this with your own image path
+
+parser = argparse.ArgumentParser(description="mmpose demo")
+parser.add_argument('--show', action='store_true', help="Show visualization")
+args = parser.parse_args()
+
 
 federer = 'resources/federer480.mp4'
 webcam = "webcam"
@@ -20,7 +26,7 @@ inferencer = MMPoseInferencer(
 
 result_generator = inferencer(
     webcam,
-    show=False,
+    show=args.show,
     return_vis=False,
     pred_out_dir='vis_results/human3d',
 

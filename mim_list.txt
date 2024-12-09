@@ -1,0 +1,6 @@
+Package    Version    Source
+---------  ---------  -----------------------------------------
+mmcv       2.1.0      https://github.com/open-mmlab/mmcv
+mmdet      3.3.0      https://github.com/open-mmlab/mmdetection
+mmengine   0.10.5     https://github.com/open-mmlab/mmengine
+mmpose     1.3.2      /home/taller/tid/mmpose

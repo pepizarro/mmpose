@@ -44,51 +44,39 @@ def consumer():
     scatter._offsets3d = (data[:, 0], data[:, 1], data[:, 2])
     plt.draw()
 
-    ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=256, create=False)
+    def read(ring_buffer):
+        try:
+            while True:
+                # Read a message from the ring buffer
+                message = ring_buffer.read()
+                if message:
+                    message = message.rstrip(b'\0')
 
-    try:
-        while True:
-            # Read a message from the ring buffer
-            message = ring_buffer.read()
-            if message:
-                message = message.rstrip(b'\0')
+                    try:
+                        result = np.frombuffer(message, dtype=np.float32).reshape((1, 17, 3))
+                        scatter._offsets3d = (result[:, 0], result[:, 1], result[:, 2])
+                        plt.draw()
+                        print("read succesful")
+                    except Exception as e:
+                        print("error parsing: ", e)
 
-                try:
-                    result = np.frombuffer(message, dtype=np.float32).reshape((1, 17, 3))
-                    scatter._offsets3d = (result[:, 0], result[:, 1], result[:, 2])
-                    plt.draw()
-                    print(result)
-                except:
-                    print("error parsing")
+        except KeyboardInterrupt:
+            print("Stopping consumer...")
+        finally:
+            ring_buffer.close()
 
-    except KeyboardInterrupt:
-        print("Stopping consumer...")
-    finally:
-        ring_buffer.close()
 
-def consumer1():
-    ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=256, create=False)
+    while True:
+        try:
+            # Attempt to connect to the existing Ring Buffer
+            ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=False)
+            print("Successfully connected to the Ring Buffer.")
+            read(ring_buffer)
+            break  # Exit the loop if successful
+        except Exception as e:
+            print("Ring Buffer not found, retrying in 1 second...")
+            time.sleep(1)  # Wait before retrying
 
-    try:
-        while True:
-            # Read a message from the ring buffer
-            message = ring_buffer.read()
-            if message:
-                message = message.rstrip(b'\0')
-
-                try:
-                    result = np.frombuffer(message, dtype=np.float32).reshape((1, 17, 3))
-                    print(result)
-                except:
-                    print("error parsing")
-
-            else:
-                print("No data available in buffer, waiting for producer...")
-
-    except KeyboardInterrupt:
-        print("Stopping consumer...")
-    finally:
-        ring_buffer.close()
 
 
 

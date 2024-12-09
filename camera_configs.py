@@ -16,4 +16,7 @@ for w, h, fps in configs:
     env["CAMERA_FPS"] = str(fps)
 
     print(f"Running with config: {w}x{h} @ {fps}fps")
-    subprocess.run(['python', 'demo.py'], env=env)
+
+    demo_process = subprocess.Popen(['python', 'demo.py'], env=env) 
+
+    subprocess.run(['python', 'buffer_test.py', 'consume'], env=env)
