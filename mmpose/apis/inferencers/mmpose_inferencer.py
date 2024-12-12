@@ -4,13 +4,14 @@ from typing import Dict, List, Optional, Sequence, Union
 
 import sys
 import time
-
+import os
 import numpy as np
 import torch
 from mmengine.config import Config, ConfigDict
 from mmengine.infer.infer import ModelType
 from mmengine.structures import InstanceData
 from rich.progress import track
+import json
 
 from tools.ring_buffer import RingBuffer
 
@@ -210,22 +211,22 @@ class MMPoseInferencer(BaseMMPoseInferencer):
 
     
         # TID: 
-        ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=True)
-        preds = []
+        # ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=True)
         count = 0
         start = time.time()
+        preds = []
 
         for proc_inputs, ori_inputs in (track(inputs, description='Inference')
                                         if self.show_progress else inputs):
 
 
-            if count >= 1000:
+            if count >= 100:
                 break
 
             preds = self.forward(proc_inputs, **forward_kwargs)
             count += 1
 
-            try:
+            """             try:
                 # print("preds: ", preds[0].pred_instances.keypoints)
                 result = preds[0].pred_instances.keypoints
                 serialized = result.tobytes()
@@ -242,7 +243,8 @@ class MMPoseInferencer(BaseMMPoseInferencer):
                 ring_buffer.write(serialized)
 
             except Exception as e:
-                print("error producing message: ", e)
+                print("error producing message: ", e) 
+            """
 
 
 
@@ -264,6 +266,65 @@ class MMPoseInferencer(BaseMMPoseInferencer):
         preds_ps = count / elapsed
         print(f"\nTotal time: {elapsed:.6f} seconds, preds {count}")
         print(f"Preds per second: {preds_ps}")
+
+        file_path = "charts/predictions_data.json"
+
+
+        # Initialize data or load it from file
+        if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+            try:
+                with open(file_path, "r") as json_file:
+                    data = json.load(json_file)
+            except json.JSONDecodeError:
+                print(f"Error decoding JSON in {file_path}. Initializing new data structure.")
+                data = {"res": [], "preds/s": [], "fps": [], "time": []}
+        else:
+            # If the file is empty or doesn't exist, initialize with an empty structure
+            print(f"{file_path} is empty or doesn't exist. Initializing new data structure.")
+            data = {"res": [], "preds/s": [], "fps": [], "time": []}
+
+            # Write the empty structure to the file
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file, indent=4)
+
+        # Get environment variables with defaults if not set
+        w = os.getenv("CAMERA_WIDTH", "640")  # Default width if not set
+        h = os.getenv("CAMERA_HEIGHT", "480")  # Default height if not set
+        fps = os.getenv("CAMERA_FPS")
+
+        if fps is None:
+            print("Warning: CAMERA_FPS environment variable not set. Using default value 30.")
+            fps = 30  # Default value
+        else:
+            try:
+                # Convert fps to float, then to int
+                fps = int(float(fps))
+            except ValueError:
+                print(f"Invalid value for CAMERA_FPS: {fps}. Using default value 30.")
+                fps = 30  # Default value in case of an invalid value
+
+        # Prepare the resolution string
+        res = f"{w}x{h}"
+
+        # Debug output for the data to be appended
+        print(f"Resolution: {res}")
+        print(f"Predictions per second: {preds_ps}")
+        print(f"Frames per second: {fps}")
+        print(f"Elapsed time: {elapsed:.6f} seconds")
+
+        # Append new data
+        data["res"].append(res)
+        data["preds/s"].append(preds_ps)
+        data["fps"].append(fps)
+        data["time"].append(elapsed)
+
+        # Write updated data back to the JSON file
+        try:
+            with open(file_path, "w") as json_file:
+                json.dump(data, json_file, indent=4)
+            print(f"Data successfully written to {file_path}")
+        except Exception as e:
+            print(f"Error writing to {file_path}: {e}")
 
         if self._video_input:
             self._finalize_video_processing(

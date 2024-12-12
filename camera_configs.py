@@ -1,12 +1,12 @@
 
 import os
 import subprocess
+import time
 
+fps = 100
 configs = [
-    (640,480, 30),
-    (1280, 720, 60),
-    (1920, 1080, 60),
-    (640,480, 100),
+    (640, 360, 10000),
+
 ]
 
 for w, h, fps in configs:
@@ -17,6 +17,6 @@ for w, h, fps in configs:
 
     print(f"Running with config: {w}x{h} @ {fps}fps")
 
-    demo_process = subprocess.Popen(['python', 'demo.py'], env=env) 
 
-    subprocess.run(['python', 'buffer_test.py', 'consume'], env=env)
+    subprocess.run(['python', 'demo.py'], env=env)
+    subprocess.run(['python', 'charts/plot.py'], env=env)

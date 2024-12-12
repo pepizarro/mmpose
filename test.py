@@ -1,16 +1,13 @@
 
+import cv2
 
-import numpy as np
+video = cv2.VideoCapture(cv2.CAP_DSHOW)
 
-arr = np.array([
-    [1,2,3],
-    [2,3,4]
-])
+video.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-ser = arr.tobytes()
+video.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 
-print(arr.shape)
-print(ser)
+video.set(cv2.CAP_PROP_FOURCC, 0x32595559)
 
-des = np.frombuffer(ser, dtype=np.float32).reshape((1, 15, 3))
-print(des)
+
+print(video.get(cv2.CAP_PROP_FPS))

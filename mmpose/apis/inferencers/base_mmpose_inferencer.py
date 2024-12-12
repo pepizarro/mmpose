@@ -255,7 +255,7 @@ class BaseMMPoseInferencer(BaseInferencer):
         fps = int(os.getenv('CAMERA_FPS', 30))
 
 
-        vcap = cv2.VideoCapture(camera_id)
+        vcap = cv2.VideoCapture(cv2.CAP_DSHOW)
         vcap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
         vcap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
         vcap.set(cv2.CAP_PROP_FPS, fps)
@@ -264,6 +264,12 @@ class BaseMMPoseInferencer(BaseInferencer):
         print("WIDTH: ", vcap.get(cv2.CAP_PROP_FRAME_WIDTH))
         print("HEIGHT: ", vcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         print("FPS: ", vcap.get(cv2.CAP_PROP_FPS))
+        os.environ["CAMERA_WIDTH"] = str(vcap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        os.environ["CAMERA_HEIGHT"] = str(vcap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        print("have: ", fps, " setting: ", vcap.get(cv2.CAP_PROP_FPS))
+        os.environ["CAMERA_FPS"] = str(vcap.get(cv2.CAP_PROP_FPS))
+
         print("\n\n")
 
         if not vcap.isOpened():
