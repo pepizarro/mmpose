@@ -228,9 +228,7 @@ class MMPoseInferencer(BaseMMPoseInferencer):
             count += 1
 
 
-            print("ring: ", ring)
             if ring == "True":
-                print("sending message")
                 try:
                     # print("preds: ", preds[0].pred_instances.keypoints)
                     result = preds[0].pred_instances.keypoints
