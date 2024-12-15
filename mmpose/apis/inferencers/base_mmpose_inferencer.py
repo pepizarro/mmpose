@@ -255,7 +255,7 @@ class BaseMMPoseInferencer(BaseInferencer):
         fps = int(os.getenv('CAMERA_FPS', 30))
 
 
-        vcap = cv2.VideoCapture(cv2.CAP_DSHOW)
+        vcap = cv2.VideoCapture(0)
         vcap.set(cv2.CAP_PROP_FRAME_WIDTH, w)
         vcap.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
         vcap.set(cv2.CAP_PROP_FPS, fps)

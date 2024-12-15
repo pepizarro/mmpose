@@ -1,7 +1,8 @@
 
 import cv2
 
-video = cv2.VideoCapture(cv2.CAP_DSHOW)
+video = cv2.VideoCapture(0)
+print(video.isOpened())
 
 video.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 

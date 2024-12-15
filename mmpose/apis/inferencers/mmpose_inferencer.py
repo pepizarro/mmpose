@@ -211,40 +211,46 @@ class MMPoseInferencer(BaseMMPoseInferencer):
 
     
         # TID: 
-        # ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=True)
+        ring_buffer = RingBuffer(name="inference_buffer", capacity=10, message_size=512, create=True)
         count = 0
         start = time.time()
         preds = []
+        ring = os.getenv("RING_BUFFER", "False")
 
         for proc_inputs, ori_inputs in (track(inputs, description='Inference')
                                         if self.show_progress else inputs):
 
 
-            if count >= 100:
+            if count >= 1000:
                 break
 
             preds = self.forward(proc_inputs, **forward_kwargs)
             count += 1
 
-            """             try:
-                # print("preds: ", preds[0].pred_instances.keypoints)
-                result = preds[0].pred_instances.keypoints
-                serialized = result.tobytes()
-                if len(serialized) == 408:
-                    first = serialized[:204]
-                    first = first.ljust(512, b'\0')
-                    ring_buffer.write(first)
-                    serialized = serialized[204:]
+
+            print("ring: ", ring)
+            if ring == "True":
+                print("sending message")
+                try:
+                    # print("preds: ", preds[0].pred_instances.keypoints)
+                    result = preds[0].pred_instances.keypoints
+                    serialized = result.tobytes()
+                    if len(serialized) == 408:
+                        first = serialized[:204]
+                        first = first.ljust(512, b'\0')
+                        ring_buffer.write(first)
+                        serialized = serialized[204:]
 
 
-                serialized = serialized.ljust(512, b'\0')
-                
-                # print("serialized: ", serialized)
-                ring_buffer.write(serialized)
+                    serialized = serialized.ljust(512, b'\0')
+                    
+                    # print("serialized: ", serialized)
+                    ring_buffer.write(serialized)
 
-            except Exception as e:
-                print("error producing message: ", e) 
-            """
+                except Exception as e:
+                    print("error producing message: ", e) 
+
+            
 
 
 

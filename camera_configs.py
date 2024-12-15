@@ -3,10 +3,11 @@ import os
 import subprocess
 import time
 
-fps = 100
+fps = 200
 configs = [
-    (640, 360, 10000),
-
+    (640, 360, fps),
+    (1280, 720, fps),
+    (1920, 1080, fps),
 ]
 
 for w, h, fps in configs:

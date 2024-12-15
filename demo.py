@@ -1,12 +1,19 @@
 #!/usr/bin/python3 
 import argparse
+
+from mmcv.video.processing import os
 from mmpose.apis import MMPoseInferencer
 
 # img_path = 'tests/data/coco/000000000785.jpg'   # replace this with your own image path
 
 parser = argparse.ArgumentParser(description="mmpose demo")
 parser.add_argument('--show', action='store_true', help="Show visualization")
+parser.add_argument('--ring', action='store_true', help="Show visualization")
+
 args = parser.parse_args()
+
+if args.ring:
+    os.environ["RING_BUFFER"] = "True"
 
 
 federer = 'resources/federer480.mp4'
@@ -19,7 +26,7 @@ inferencer = MMPoseInferencer(
            'test_config.py',
     pose3d_weights='https://download.openmmlab.com/mmpose/v1/body_3d_keypoint/'
                    'pose_lift/h36m/motionbert_ft_h36m-d80af323_20230531.pth',
-    device="cuda",
+    device="cpu",
     # show_progress=True
 )
 
